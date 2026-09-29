@@ -1,110 +1,44 @@
-# GatherLink — Interest Group Platform
+# GatherLink Web
+Find interest groups, join a community, and share posts with its members.
 
-**GatherLink** is a Spring Boot web application that enables users to discover, join, and interact within interest-based groups. This application was built as a full-stack solution using Java, Spring Boot MVC, JSP for frontend, and MySQL as the backend database. This project was developed during a software development internship and serves as a full-stack application featuring RESTful APIs, JSP-based frontend views, and database interaction using MySQL with JPA/Hibernate.
+## What it does
+Create an account, sign in, explore groups, create a group, join one, and post to groups you own or belong to. Group owners can assign member roles. Accounts can update their profile. Pages use native Spring MVC and JSP rather than a separate frontend application.
 
----
+## Architecture and tech stack
+Java 17, Spring Boot, Spring Security, Spring MVC/JSP/JSTL and JPA. Controllers handle page workflows; services validate data, enforce group access and perform transactions; repositories persist users, groups, memberships and posts. Passwords are BCrypt hashes, sessions authenticate requests and all mutation forms require CSRF tokens. User-generated output is escaped.
 
-## Project Overview
+## Quick start
+Install JDK 17. No manual MySQL installation is required for the preferred local workflow.
 
-This is a **Java Spring Boot MVC** application with the following core functionalities:
-
-- Users can register, log in, and manage their profiles.
-- Explore groups based on interests.
-- Join or leave interest groups.
-- Create posts and comments within groups.
-- Backend architecture includes Controllers, Services, Repositories, and Entity models.
-
----
-
-## Project Structure
-
-Here is a high-level overview of the key directories and files:
-
-```text
-gather-link/
-├── pom.xml
-├── mvnw*
-├── src/
-│   ├── main/
-│   │   ├── java/com/gather_link/
-│   │   │   ├── controller/
-│   │   │   ├── model/
-│   │   │   ├── service/
-│   │   │   └── ...
-│   │   ├── resources/
-│   │   │   └── application.properties
-│   │   └── webapp/WEB-INF/jsp/
-│   │   │   ├── WEB-INF/jsp/
-│   │   │   │   ├── createGroup.jsp
-│   │   │   │   ├── createPost.jsp
-│   │   │   │   └── ...
-│   │   │   ├── resources/
-│   │   │   │   └── styles.css
+```sh
+./mvnw spring-boot:run
 ```
+Open http://localhost:8080 and choose **Create an account**. Local H2 storage persists in ignored `data/`; restarting preserves accounts and posts. The first run downloads Maven dependencies. No seeded account or shared default password is provided. The H2 console is disabled.
 
+## Configuration
+The default `local` profile uses a persistent H2 database. For an existing, provisioned MySQL environment, set `SPRING_PROFILES_ACTIVE=mysql`, `DB_URL`, `DB_USERNAME` and `DB_PASSWORD`. The MySQL profile validates an existing schema; production schema migration and HTTPS termination require separate deployment work. Secure session cookies are enabled in that profile. Never commit credentials or use the local profile for a public deployment.
 
-For a deeper breakdown of files:
+## Testing
+```sh
+./mvnw verify
+```
+Integration tests use an isolated in-memory database and check registration/login, password hashing and non-disclosure, CSRF, membership and ownership boundaries, idempotent joining, posting and validation. The command also packages an executable WAR. GitHub Actions runs it with JDK 17 and a Maven cache.
 
-- See [`FolderStructure_README.md`](src/main/FolderStructure_README.md) for explanations of each folder under `src/main`.
-- See [`ModuleBreakdown_README.md`](src/main/java/com/gather_link/ModuleBreakdown_README.md) for class-level breakdowns of packages like `controller`, `dto`, `model`, etc.
+## Project structure and data model
+- `controller/`: registration, login, groups, posts and profile pages
+- `service/`: validation, permissions and transactional operations
+- `model/`, `repository/`: `Users`, `Groups`, `GroupMemberships`, `Posts`
+- `src/main/webapp/WEB-INF/jsp/`: server-rendered templates
 
----
+A group has one owner and unique user memberships. Posts belong to a group and an author. Joining locks the group and is idempotent; counters are recomputed from persisted rows during writes. Owner membership is implicit and excluded from `memberCount`.
 
-## Dependency Management: `pom.xml`
+## Design decisions
+An embedded local database makes the existing JVM application reproducible without adding a container dependency. Spring Security supplies session fixation protection, login/logout and CSRF. The unused, unrestricted entity CRUD controllers were removed: browser workflows remain available, while an eventual public REST API must use scoped DTOs and explicit authorization.
 
-This project uses **Maven** as the build tool. The `pom.xml` file, located at the root of the repository, defines all dependencies, build settings, and plugin configurations needed to run the project.
+## Known limitations and migration
+Existing databases may contain plaintext passwords. They cannot authenticate under BCrypt; reset those accounts through a reviewed migration or use a fresh local database. Review duplicate usernames/emails and memberships before applying the new unique constraints. Historical counters may need a reconciliation migration. No credential rotation or database changes have been applied to a live environment.
 
-Key configurations include:
+Comments are a data model only, not an advertised working UI feature. Search, notifications, account recovery, production migrations, finer moderator permissions and a credential-backed MySQL test are future work. Roles do not grant administrative actions beyond the owner's existing role-management workflow. No deployment pipeline is supplied without a deployment target.
 
-- `spring-boot-starter-web` — for building the web app and RESTful APIs
-- `spring-boot-starter-data-jpa` — for database interaction using JPA/Hibernate
-- `mysql-connector-java` — for connecting to the MySQL database
-- `javax.servlet` and JSP-related dependencies — for JSP view rendering
-- Java version and project metadata
-
-**Maven automatically downloads all dependencies** when you build the project (e.g., using `mvn clean install` or via Eclipse/IntelliJ) – if you're cloning the repository for the first time.
-
-You can modify the `pom.xml` file to:
-- Add new libraries
-- Change the Java version
-
----
-
-## How to Run the Project
-
-### Prerequisites
-
-- Java 17+
-- Maven 3.6+
-- MySQL installed and configured
-- IDE like **Eclipse** or **IntelliJ IDEA**
-
-### Steps
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/your-username/gather-link.git
-   cd gather-link
-
-2. **Configure the Database**
-   ```bash
-   Make sure MySQL is running and a database named `interest_groups` exists.
-
-   Update your credentials in:
-   src/main/resources/application.properties
-
-   spring.datasource.username=your_username
-   spring.datasource.password=your_password
-
-4. **You can use Maven from the terminal or your IDE:**
-   ```bash
-   ./mvnw clean install
-
-5. **Run the Application:**
-   ```bash
-   ./mvnw spring-boot:run
-
-6. **Open in Browser**
-   ```bash
-   Go to:
-   http://localhost:8080/
+## Screenshots / demo
+Run the local workflow to explore the native JSP interface. A reviewer can create two accounts to verify that joining is required before accessing group posts. Test data stays local.

@@ -58,13 +58,13 @@ public class GroupMembershipService {
 	    return groupMembershipRepository.findByGroup(group);
 	}
 	
-	public void addMember(Groups group, Users user) {
-	    GroupMemberships membership = new GroupMemberships();
-	    membership.setGroup(group);
-	    membership.setUser(user);
-	    membership.setRole(Role.MEMBER);
-	    groupMembershipRepository.save(membership);
-	}
+ @org.springframework.transaction.annotation.Transactional
+ public void addMember(Groups group,Users user){
+  group=groupsRepository.findLockedById(group.getGroupId()).orElseThrow(()->new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
+  if(group.getOwner().getUserId().equals(user.getUserId()) || groupMembershipRepository.findByGroupAndUser(group,user)!=null)return;
+  var membership=new GroupMemberships();membership.setGroup(group);membership.setUser(user);membership.setRole(Role.MEMBER);groupMembershipRepository.saveAndFlush(membership);
+  group.setMemberCount((int)groupMembershipRepository.countByGroup(group));groupsRepository.save(group);
+ }
 
 	public void updateRole(Groups group, Long userId, Role role) {
 		Users user = new Users();

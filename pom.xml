@@ -93,7 +93,7 @@
 		<dependency>
 		    <groupId>org.apache.tomcat.embed</groupId>
 		    <artifactId>tomcat-embed-jasper</artifactId>
-		    <version>10.1.18</version>
+		    
 		</dependency>
 		
 		<!-- Dev tools -->
@@ -105,18 +105,10 @@
 		
 		<!-- For jstl -->
 		<!-- glassfish-jstl -->
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>glassfish-jstl</artifactId>
-			<version>11.0.25</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>jakarta.servlet.jsp.jstl</groupId>
-			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-		</dependency>
 			
-	</dependencies>
+	<dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-security</artifactId></dependency>
+<dependency><groupId>org.springframework.security</groupId><artifactId>spring-security-test</artifactId><scope>test</scope></dependency>
+</dependencies>
 
 	<build>
 		<plugins>

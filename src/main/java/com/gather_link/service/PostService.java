@@ -20,11 +20,14 @@ public class PostService {
 	@Autowired
 	private GroupRepository groupsRepository;
 
+    @org.springframework.transaction.annotation.Transactional
     public void create(Posts post) {
-        postRepository.save(post);
+        if(post.getContent()==null || post.getContent().isBlank() || post.getContent().length()>5000)throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST,"Post must contain 1–5000 characters");
+        post.setGroup(groupsRepository.findLockedById(post.getGroup().getGroupId()).orElseThrow(()->new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND)));
+        postRepository.saveAndFlush(post);
         
         Groups group = post.getGroup();
-        group.setPostCount(group.getPostCount() + 1);
+        group.setPostCount((int)postRepository.countByGroup(group));
         groupsRepository.save(group);
     }
     

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints={@UniqueConstraint(columnNames="username"),@UniqueConstraint(columnNames="email")})
 public class Users {
     
     @Id
@@ -54,6 +54,7 @@ public class Users {
     	this.email = email;
     }
     
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public String getPassword() {
     	return password;
     }

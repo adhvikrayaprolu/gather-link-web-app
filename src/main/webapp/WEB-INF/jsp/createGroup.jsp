@@ -6,13 +6,14 @@
         <div class="card-body">
             <h3 class="card-title text-primary mb-4">Create a New Group</h3>
             <form method="post" action="${pageContext.request.contextPath}/groups/add">
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <div class="mb-3">
                     <label for="groupName" class="form-label"><b>Group Name</b></label>
-                    <input type="text" id="groupName" name="groupName" class="form-control" required />
+                    <input type="text" id="groupName" name="groupName" maxlength="100" class="form-control" required />
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label"><b>Description</b></label>
-                    <textarea id="description" name="description" class="form-control" rows="3" required></textarea>
+                    <textarea id="description" name="description" maxlength="2000" class="form-control" rows="3" required></textarea>
                 </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary px-4">Create Group</button>

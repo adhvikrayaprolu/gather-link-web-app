@@ -10,7 +10,7 @@
     <br>
     <br>
     
-    <p><b>Welcome, ${key.username}!</b></p>
+    <p><b>Welcome, <c:out value="${key.username}"/>!</b></p>
 </main>
 
 <%@ include file="components/footer.jsp" %>
