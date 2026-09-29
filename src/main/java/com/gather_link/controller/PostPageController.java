@@ -29,9 +29,9 @@ public class PostPageController {
     @GetMapping("/posts/group/{groupId}")
     public String viewPosts(@PathVariable("groupId") Long groupId, Model model, HttpSession session) {
         Groups group = groupService.getByGroupId(groupId);
-        access.requireMember(group, (Users) session.getAttribute("loggedInUser")); 
+        access.requireMember(group, (Users) session.getAttribute("loggedInUser"));
         List<Posts> posts = postService.getByGroupId(groupId);
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy hh:mm a");
         for (Posts post : posts) {
             String formatted = post.getPostCreation().format(formatter);
@@ -43,7 +43,7 @@ public class PostPageController {
 
         return "posts";
     }
-    
+
     @GetMapping("/posts/create")
     public String showCreatePostForm(@RequestParam("groupId") Long groupId, Model model, HttpSession session) {
         Users loggedInUser = (Users) session.getAttribute("loggedInUser");
