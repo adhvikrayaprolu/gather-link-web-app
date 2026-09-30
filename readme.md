@@ -1,44 +1,44 @@
 # GatherLink Web
-Find interest groups, join a community, and share posts with its members.
+An interest-group community application for discovering groups, joining them and sharing posts through a browser.
 
-## What it does
-Create an account, sign in, explore groups, create a group, join one, and post to groups you own or belong to. Group owners can assign member roles. Accounts can update their profile. Pages use native Spring MVC and JSP rather than a separate frontend application.
+## Overview
+GatherLink organizes community discussion around shared interests, with group owners, members and authenticated posting.
 
-## Architecture and tech stack
-Java 17, Spring Boot, Spring Security, Spring MVC/JSP/JSTL and JPA. Controllers handle page workflows; services validate data, enforce group access and perform transactions; repositories persist users, groups, memberships and posts. Passwords are BCrypt hashes, sessions authenticate requests and all mutation forms require CSRF tokens. User-generated output is escaped.
+## Project Context
+Developed during a software engineering internship at ClayHR. The [Android application](https://github.com/adhvikrayaprolu/gather-link-mobile-app) explores the same GatherLink product using Firebase. These are related clients/prototypes, not a shared live database: web uses JPA/H2 or MySQL; Android uses Firestore.
 
-## Quick start
-Install JDK 17. No manual MySQL installation is required for the preferred local workflow.
+## Key Features
+- Registration and BCrypt-backed session login.
+- Group discovery/creation and idempotent membership joins.
+- Member/owner post access and owner-controlled role changes.
+- CSRF-protected forms, validated input and escaped JSP output.
 
+## Architecture / Tech Stack
+Spring Boot MVC + Spring Security → services/authorization boundaries → JPA repositories → persistent local H2. JSP/CSS renders server-side pages. Optional production MySQL uses environment configuration; local startup requires no database installation.
+
+## Quick Start
+Install JDK17; use the checked-in Maven wrapper:
 ```sh
 ./mvnw spring-boot:run
 ```
-Open http://localhost:8080 and choose **Create an account**. Local H2 storage persists in ignored `data/`; restarting preserves accounts and posts. The first run downloads Maven dependencies. No seeded account or shared default password is provided. The H2 console is disabled.
+Open http://localhost:8080, register an account, create or join a group, and post. The default `local` profile stores H2 data under ignored `data/`; it survives restart. No credentials are edited into source. Stop with Ctrl-C.
 
-## Configuration
-The default `local` profile uses a persistent H2 database. For an existing, provisioned MySQL environment, set `SPRING_PROFILES_ACTIVE=mysql`, `DB_URL`, `DB_USERNAME` and `DB_PASSWORD`. The MySQL profile validates an existing schema; production schema migration and HTTPS termination require separate deployment work. Secure session cookies are enabled in that profile. Never commit credentials or use the local profile for a public deployment.
-
-## Testing
+## Validation / Tests
 ```sh
 ./mvnw verify
 ```
-Integration tests use an isolated in-memory database and check registration/login, password hashing and non-disclosure, CSRF, membership and ownership boundaries, idempotent joining, posting and validation. The command also packages an executable WAR. GitHub Actions runs it with JDK 17 and a Maven cache.
+Spring integration tests cover real login, password hashing, CSRF, authorization, input validation, idempotent joins, counters and retired unscoped API writes. CI builds the WAR and executes these tests with isolated H2.
 
-## Project structure and data model
-- `controller/`: registration, login, groups, posts and profile pages
-- `service/`: validation, permissions and transactional operations
-- `model/`, `repository/`: `Users`, `Groups`, `GroupMemberships`, `Posts`
-- `src/main/webapp/WEB-INF/jsp/`: server-rendered templates
+## Environment Variables
+Default local H2 needs none. The optional `mysql` profile requires `DB_URL`, `DB_USERNAME` and `DB_PASSWORD`, a provisioned schema and HTTPS/cookie configuration. Review `application-mysql.properties` before using an existing database; legacy plaintext passwords and duplicate/counter data need migration review.
 
-A group has one owner and unique user memberships. Posts belong to a group and an author. Joining locks the group and is idempotent; counters are recomputed from persisted rows during writes. Owner membership is implicit and excluded from `memberCount`.
+## Project Structure
+`src/main/java/com/gather_link/`: controllers, security, services, models and repositories; `src/main/webapp/WEB-INF/jsp/`: views; `src/main/resources/`: profile configuration; `src/test/`: integration suite.
 
-## Design decisions
-An embedded local database makes the existing JVM application reproducible without adding a container dependency. Spring Security supplies session fixation protection, login/logout and CSRF. The unused, unrestricted entity CRUD controllers were removed: browser workflows remain available, while an eventual public REST API must use scoped DTOs and explicit authorization.
+## Current Status / Limitations
+The web flow supports joining; leaving a group is not implemented and remains a scoped issue. Comments and a public entity CRUD API are not advertised as completed features. Production MySQL and existing-data migration require human verification. The deprecated unrestricted entity endpoints were removed to prevent bypassing MVC authorization.
 
-## Known limitations and migration
-Existing databases may contain plaintext passwords. They cannot authenticate under BCrypt; reset those accounts through a reviewed migration or use a fresh local database. Review duplicate usernames/emails and memberships before applying the new unique constraints. Historical counters may need a reconciliation migration. No credential rotation or database changes have been applied to a live environment.
+## Related Projects
+[GatherLink Android](https://github.com/adhvikrayaprolu/gather-link-mobile-app) — native client for the same community concept, with separate Firebase persistence.
 
-Comments are a data model only, not an advertised working UI feature. Search, notifications, account recovery, production migrations, finer moderator permissions and a credential-backed MySQL test are future work. Roles do not grant administrative actions beyond the owner's existing role-management workflow. No deployment pipeline is supplied without a deployment target.
-
-## Screenshots / demo
-Run the local workflow to explore the native JSP interface. A reviewer can create two accounts to verify that joining is required before accessing group posts. Test data stays local.
+Read [AGENTS.md](AGENTS.md) and GitHub Issues before implementation.

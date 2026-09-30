@@ -5,10 +5,10 @@ Discover, join and participate in interest groups through a browser.
 src/main/java/com/gather_link: MVC controllers, services, JPA models/repositories; src/main/webapp/WEB-INF/jsp: JSP; application-local.properties: in-memory H2; default profile: MySQL.
 
 # Local Development
-Use JDK17. ./mvnw spring-boot:run -Dspring-boot.run.profiles=local uses existing ephemeral H2 without MySQL. ./mvnw verify currently builds without behavior tests. Persistent/env-driven local setup remains an issue.
+Follow the verified root README workflow. Root Makefiles coordinate Python/React environments where present; Spring defaults to persistent local H2; Android needs JDK17 and an explicit SDK path. Do not use source-level credentials or mutate live Firebase.
 
 # Validation
-Canonical command: `./mvnw verify`. See docs/engineering-control-plane.md for prerequisites and known gaps. A build with zero tests is not behavioral validation. Do not skip a failing check or claim hosted CI passed before a run exists.
+Canonical setup/run/check commands: `./mvnw spring-boot:run; ./mvnw verify` (run as separate commands). See README for prerequisites. Behavioral tests are mandatory and CI runs them; do not reduce checks to syntax or zero-test builds. Provider tests use fakes or demo-gatherlink emulators.
 
 # Frontend Rules
 Keep the native stack (JSP, vanilla HTML or Android Java/XML). Preserve keyboard/accessibility, loading/error/empty states; do not migrate to React.
@@ -23,7 +23,7 @@ Add meaningful regression tests for the selected workflow, including failure/aut
 Read open GitHub issues as the work source. Branch from current main as codex/<issue>-<scope>; link the real issue in a draft PR, record validation and verification limits. Use Closes #N only when all criteria are met; issue closes on human merge, not when the draft opens. Never merge or push directly to main.
 
 # Do Not
-Do not commit secrets, migrate frameworks, change unrelated features, deploy, rotate credentials or mutate live cloud data. Do not treat unmerged local sprint branches as main. Before implementing overlapping work inspect the existing local branch listed in docs/engineering-control-plane.md and avoid duplicate PRs.
+Do not commit secrets, migrate frameworks, change unrelated features, deploy, rotate credentials or mutate live cloud data. Inspect open PRs before selecting an issue; the quality integration PR publishes earlier product and control-plane work. Never redo work already present in an active PR.
 
 # Issue Selection Rules
 1. Read the Portfolio readiness tracking meta issue; stop if complete.
