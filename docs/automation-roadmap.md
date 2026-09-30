@@ -1,14 +1,17 @@
-# gather-link-web-app roadmap
+# gather-link-web-app reconciliation roadmap
 
-1. [Secure authentication, authorization and rendered content](https://github.com/adhvikrayaprolu/gather-link-web-app/issues/1) — P0 / human-review
-2. [Make local development reproducible and add Spring CI](https://github.com/adhvikrayaprolu/gather-link-web-app/issues/2) — P1 / ready
-3. [Complete consistent group membership and posting workflows](https://github.com/adhvikrayaprolu/gather-link-web-app/issues/3) — P1 / blocked
-   Depends on #1
+Integration awaiting human review: [https://github.com/adhvikrayaprolu/gather-link-web-app/pull/7](https://github.com/adhvikrayaprolu/gather-link-web-app/pull/7). Main is unchanged.
 
-NEXT AUTOMATION-READY ISSUE: [#2](https://github.com/adhvikrayaprolu/gather-link-web-app/issues/2)
+## Already implemented in the active PR
+- [#1](https://github.com/adhvikrayaprolu/gather-link-web-app/issues/1) — verified implementation; blocked from duplicate agent selection pending merge.
+- [#2](https://github.com/adhvikrayaprolu/gather-link-web-app/issues/2) — verified implementation; blocked from duplicate agent selection pending merge.
 
-Portfolio tracker: https://github.com/adhvikrayaprolu/gather-link-web-app/issues/5
+## Remaining work
+- #3
+- #8
 
-Infrastructure PR: https://github.com/adhvikrayaprolu/gather-link-web-app/pull/6
+See the current issue bodies for partial implementation, dependencies and human approval boundaries. No live credential rotation, production migration or deployment was performed.
 
-Issue #4 was consolidated into #2 and closed as a duplicate.
+NEXT AUTOMATION-READY ISSUE: None until review/dependencies resolve. Do not recreate work in the active PR.
+
+Portfolio readiness tracker: https://github.com/adhvikrayaprolu/gather-link-web-app/issues/5

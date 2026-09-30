@@ -1,114 +1,44 @@
-# GatherLink — Interest Group Platform
+# GatherLink Web
+An interest-group community application for discovering groups, joining them and sharing posts through a browser.
 
-**GatherLink** is a Spring Boot web application that enables users to discover, join, and interact within interest-based groups. This application was built as a full-stack solution using Java, Spring Boot MVC, JSP for frontend, and MySQL as the backend database. This project was developed during a software development internship and serves as a full-stack application featuring RESTful APIs, JSP-based frontend views, and database interaction using MySQL with JPA/Hibernate.
+## Overview
+GatherLink organizes community discussion around shared interests, with group owners, members and authenticated posting.
 
----
+## Project Context
+Developed during a software engineering internship at ClayHR. The [Android application](https://github.com/adhvikrayaprolu/gather-link-mobile-app) explores the same GatherLink product using Firebase. These are related clients/prototypes, not a shared live database: web uses JPA/H2 or MySQL; Android uses Firestore.
 
-## Project Overview
+## Key Features
+- Registration and BCrypt-backed session login.
+- Group discovery/creation and idempotent membership joins.
+- Member/owner post access and owner-controlled role changes.
+- CSRF-protected forms, validated input and escaped JSP output.
 
-This is a **Java Spring Boot MVC** application with the following core functionalities:
+## Architecture / Tech Stack
+Spring Boot MVC + Spring Security → services/authorization boundaries → JPA repositories → persistent local H2. JSP/CSS renders server-side pages. Optional production MySQL uses environment configuration; local startup requires no database installation.
 
-- Users can register, log in, and manage their profiles.
-- Explore groups based on interests.
-- Join or leave interest groups.
-- Create posts and comments within groups.
-- Backend architecture includes Controllers, Services, Repositories, and Entity models.
+## Quick Start
+Install JDK17; use the checked-in Maven wrapper:
+```sh
+./mvnw spring-boot:run
+```
+Open http://localhost:8080, register an account, create or join a group, and post. The default `local` profile stores H2 data under ignored `data/`; it survives restart. No credentials are edited into source. Stop with Ctrl-C.
 
----
+## Validation / Tests
+```sh
+./mvnw verify
+```
+Spring integration tests cover real login, password hashing, CSRF, authorization, input validation, idempotent joins, counters and retired unscoped API writes. CI builds the WAR and executes these tests with isolated H2.
+
+## Environment Variables
+Default local H2 needs none. The optional `mysql` profile requires `DB_URL`, `DB_USERNAME` and `DB_PASSWORD`, a provisioned schema and HTTPS/cookie configuration. Review `application-mysql.properties` before using an existing database; legacy plaintext passwords and duplicate/counter data need migration review.
 
 ## Project Structure
+`src/main/java/com/gather_link/`: controllers, security, services, models and repositories; `src/main/webapp/WEB-INF/jsp/`: views; `src/main/resources/`: profile configuration; `src/test/`: integration suite.
 
-Here is a high-level overview of the key directories and files:
+## Current Status / Limitations
+The web flow supports joining; leaving a group is not implemented and remains a scoped issue. Comments and a public entity CRUD API are not advertised as completed features. Production MySQL and existing-data migration require human verification. The deprecated unrestricted entity endpoints were removed to prevent bypassing MVC authorization.
 
-```text
-gather-link/
-├── pom.xml
-├── mvnw*
-├── src/
-│   ├── main/
-│   │   ├── java/com/gather_link/
-│   │   │   ├── controller/
-│   │   │   ├── model/
-│   │   │   ├── service/
-│   │   │   └── ...
-│   │   ├── resources/
-│   │   │   └── application.properties
-│   │   └── webapp/WEB-INF/jsp/
-│   │   │   ├── WEB-INF/jsp/
-│   │   │   │   ├── createGroup.jsp
-│   │   │   │   ├── createPost.jsp
-│   │   │   │   └── ...
-│   │   │   ├── resources/
-│   │   │   │   └── styles.css
-```
+## Related Projects
+[GatherLink Android](https://github.com/adhvikrayaprolu/gather-link-mobile-app) — native client for the same community concept, with separate Firebase persistence.
 
-
-For a deeper breakdown of files:
-
-- See [`FolderStructure_README.md`](src/main/FolderStructure_README.md) for explanations of each folder under `src/main`.
-- See [`ModuleBreakdown_README.md`](src/main/java/com/gather_link/ModuleBreakdown_README.md) for class-level breakdowns of packages like `controller`, `dto`, `model`, etc.
-
----
-
-## Dependency Management: `pom.xml`
-
-This project uses **Maven** as the build tool. The `pom.xml` file, located at the root of the repository, defines all dependencies, build settings, and plugin configurations needed to run the project.
-
-Key configurations include:
-
-- `spring-boot-starter-web` — for building the web app and RESTful APIs
-- `spring-boot-starter-data-jpa` — for database interaction using JPA/Hibernate
-- `mysql-connector-java` — for connecting to the MySQL database
-- `javax.servlet` and JSP-related dependencies — for JSP view rendering
-- Java version and project metadata
-
-**Maven automatically downloads all dependencies** when you build the project (e.g., using `mvn clean install` or via Eclipse/IntelliJ) – if you're cloning the repository for the first time.
-
-You can modify the `pom.xml` file to:
-- Add new libraries
-- Change the Java version
-
----
-
-## How to Run the Project
-
-### Prerequisites
-
-- Java 17+
-- Maven 3.6+
-- MySQL installed and configured
-- IDE like **Eclipse** or **IntelliJ IDEA**
-
-### Steps
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/your-username/gather-link.git
-   cd gather-link
-
-2. **Configure the Database**
-   ```bash
-   Make sure MySQL is running and a database named `interest_groups` exists.
-
-   Update your credentials in:
-   src/main/resources/application.properties
-
-   spring.datasource.username=your_username
-   spring.datasource.password=your_password
-
-4. **You can use Maven from the terminal or your IDE:**
-   ```bash
-   ./mvnw clean install
-
-5. **Run the Application:**
-   ```bash
-   ./mvnw spring-boot:run
-
-6. **Open in Browser**
-   ```bash
-   Go to:
-   http://localhost:8080/
-
-## Engineering workflow
-
-See [engineering setup, validation and known blockers](docs/engineering-control-plane.md) and [agent instructions](AGENTS.md). Canonical validation: `./mvnw verify` after the documented dependency setup.
+Read [AGENTS.md](AGENTS.md) and GitHub Issues before implementation.
