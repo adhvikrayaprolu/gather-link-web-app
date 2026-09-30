@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/profile")
 public class ProfileController {
 
+    @Autowired private com.gather_link.service.UserService userService;
     @Autowired
     private UserRepository userRepository;
 
@@ -36,9 +37,13 @@ public class ProfileController {
             return "redirect:/login";
         }
 
+        if(username==null || !username.matches("[A-Za-z0-9_-]{3,50}")){model.addAttribute("error","Invalid username");model.addAttribute("loggedInUser",user);return "editProfile";}
+        Users existing=userRepository.findByUsername(username);
+        if(existing!=null && !existing.getUserId().equals(user.getUserId())){model.addAttribute("error","Username already taken");model.addAttribute("loggedInUser",user);return "editProfile";}
         user.setUsername(username);
         if (password != null && !password.isEmpty()) {
-            user.setPassword(password);
+            try {user.setPassword(userService.hashPassword(password));}
+            catch(IllegalArgumentException e){model.addAttribute("error",e.getMessage());model.addAttribute("loggedInUser",user);return "editProfile";}
         }
 
         userRepository.save(user);

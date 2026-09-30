@@ -37,12 +37,12 @@
                     <c:when test="${not empty sessionScope.loggedInUser}">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                ${sessionScope.loggedInUser.username}
+                                <c:out value="${sessionScope.loggedInUser.username}"/>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/profile">Edit Profile</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Logout</a></li>
+                                <li><form method="post" action="${pageContext.request.contextPath}/logout"><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/><button class="dropdown-item" type="submit">Logout</button></form></li>
                             </ul>
                         </li>
                     </c:when>

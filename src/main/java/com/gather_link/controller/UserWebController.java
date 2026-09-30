@@ -55,9 +55,4 @@ public class UserWebController {
         return "users";
     }
     
-    @PostMapping("/users/add")
-    public String addUser(Users user) {
-        userService.create(user);
-        return "redirect:/users";
-    }
 }

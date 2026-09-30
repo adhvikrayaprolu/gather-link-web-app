@@ -19,13 +19,13 @@
                 <c:forEach var="user" items="${users}">
                     <tr>
                         <td>${user.userId}</td>
-                        <td>${user.username}</td>
-                        <td>${user.email}</td>
+                        <td><c:out value="${user.username}"/></td>
+                        <td><c:out value="${user.email}"/></td>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty userGroupsMap[user.userId]}">
                                     <c:forEach var="groupName" items="${userGroupsMap[user.userId]}" varStatus="loop">
-                                        ${groupName}<c:if test="${!loop.last}">, </c:if>
+                                        <c:out value="${groupName}"/><c:if test="${!loop.last}">, </c:if>
                                     </c:forEach>
                                 </c:when>
                                 <c:otherwise>

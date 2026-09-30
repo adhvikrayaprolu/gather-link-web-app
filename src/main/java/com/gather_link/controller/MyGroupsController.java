@@ -20,6 +20,7 @@ import java.util.List;
 
 @Controller
 public class MyGroupsController {
+ @Autowired private com.gather_link.service.GroupAccess access;
 
     @Autowired
     private GroupService groupService;
@@ -64,6 +65,7 @@ public class MyGroupsController {
         }
 
         Groups group = groupService.getByGroupId(groupId);
+        access.requireMember(group,loggedInUser);
         List<GroupMemberships> memberships = groupMembershipService.getByGroup(group);
 
         modelMap.addAttribute("group", group);
@@ -76,9 +78,7 @@ public class MyGroupsController {
         Users loggedInUser = (Users) session.getAttribute("loggedInUser");
         Groups group = groupService.getByGroupId(groupId);
 
-        if (!loggedInUser.getUserId().equals(group.getOwner().getUserId())) {
-            return "redirect:/group-members";
-        }
+        access.requireOwner(group,loggedInUser);
 
         groupMembershipService.updateRole(group, userId, role);
         return "redirect:/groups/" + groupId + "/members";

@@ -11,8 +11,8 @@
             <c:forEach var="group" items="${ownedGroups}">
                 <div class="card mb-4 shadow-sm border border-primary-subtle">
                     <div class="card-body">
-                        <h4 class="card-title fw-bold mb-2 text-primary">Group Name: ${group.groupName}</h4>
-                        <p class="card-text mb-1"><strong>Description:</strong> ${group.description}</p>
+                        <h4 class="card-title fw-bold mb-2 text-primary">Group Name: <c:out value="${group.groupName}"/></h4>
+                        <p class="card-text mb-1"><strong>Description:</strong> <c:out value="${group.description}"/></p>
                         <p class="card-text mb-1"><strong>Statistics:</strong></p>
                         <span class="badge bg-secondary me-2">Members: ${group.memberCount}</span>
                         <span class="badge bg-info text-dark">Posts: ${group.postCount}</span>
@@ -41,8 +41,8 @@
             <c:forEach var="group" items="${memberGroups}">
                 <div class="card mb-4 shadow-sm border border-success-subtle">
                     <div class="card-body">
-                        <h4 class="card-title fw-bold mb-2 text-primary">Group Name: ${group.groupName}</h4>
-                        <p class="card-text mb-1"><strong>Description:</strong> ${group.description}</p>
+                        <h4 class="card-title fw-bold mb-2 text-primary">Group Name: <c:out value="${group.groupName}"/></h4>
+                        <p class="card-text mb-1"><strong>Description:</strong> <c:out value="${group.description}"/></p>
                         <p class="card-text mb-1"><strong>Owner:</strong> ${group.owner.username}</p>
                         <p class="card-text mb-1"><strong>Statistics:</strong></p>
                         <span class="badge bg-secondary me-2">Members: ${group.memberCount}</span>

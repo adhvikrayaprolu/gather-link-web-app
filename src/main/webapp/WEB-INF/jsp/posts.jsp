@@ -5,7 +5,7 @@
 
 <div class="container my-5">
     
-    <h2 class="mb-4 text-primary text-center">${group.groupName}</h2>
+    <h2 class="mb-4 text-primary text-center"><c:out value="${group.groupName}"/></h2>
 
     <div class="d-flex justify-content-end mb-4">
         <form action="${pageContext.request.contextPath}/posts/create" method="get">
@@ -15,14 +15,15 @@
     </div>
 
     <div class="scrollable-posts" style="max-height: 600px; overflow-y: auto;">
+    <c:if test="${empty posts}"><p role="status">No posts yet. Start the conversation.</p></c:if>
     <c:forEach var="post" items="${posts}">
         <div class="card mb-3 shadow-sm">
             <div class="card-body">
-                <p class="card-text">${post.content}</p>
+                <p class="card-text"><c:out value="${post.content}"/></p>
                 
                 <div style="background-color: #e7f3ff;" class="p-2 rounded border mt-3">
                     <small class="text-muted">
-                        Posted by <strong>${post.postCreator.username}</strong> on ${post.formattedDate}
+                        Posted by <strong>${post.postCreator.username}</strong> on <c:out value="${post.formattedDate}"/>
                     </small>
                 </div>
             </div>

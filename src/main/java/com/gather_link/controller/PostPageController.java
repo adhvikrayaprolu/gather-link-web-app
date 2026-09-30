@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 
 @Controller
 public class PostPageController {
+ @Autowired private com.gather_link.service.GroupAccess access;
 
     @Autowired
     private GroupService groupService;
@@ -26,10 +27,11 @@ public class PostPageController {
     private PostService postService;
 
     @GetMapping("/posts/group/{groupId}")
-    public String viewPosts(@PathVariable("groupId") Long groupId, Model model) {
-        Groups group = groupService.getByGroupId(groupId); 
+    public String viewPosts(@PathVariable("groupId") Long groupId, Model model, HttpSession session) {
+        Groups group = groupService.getByGroupId(groupId);
+        access.requireMember(group, (Users) session.getAttribute("loggedInUser"));
         List<Posts> posts = postService.getByGroupId(groupId);
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy hh:mm a");
         for (Posts post : posts) {
             String formatted = post.getPostCreation().format(formatter);
@@ -41,7 +43,7 @@ public class PostPageController {
 
         return "posts";
     }
-    
+
     @GetMapping("/posts/create")
     public String showCreatePostForm(@RequestParam("groupId") Long groupId, Model model, HttpSession session) {
         Users loggedInUser = (Users) session.getAttribute("loggedInUser");
@@ -50,6 +52,7 @@ public class PostPageController {
         }
 
         Groups group = groupService.getByGroupId(groupId);
+        access.requireMember(group, (Users) session.getAttribute("loggedInUser"));
         model.addAttribute("group", group);
         return "createPost";
     }
@@ -64,6 +67,7 @@ public class PostPageController {
         }
 
         Groups group = groupService.getByGroupId(groupId);
+        access.requireMember(group, (Users) session.getAttribute("loggedInUser"));
         Posts post = new Posts();
         post.setGroup(group);
         post.setPostCreator(loggedInUser);

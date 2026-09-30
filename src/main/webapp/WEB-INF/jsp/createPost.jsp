@@ -4,15 +4,16 @@
 
 <div class="container my-5">
     <h2 class="text-center mb-4 text-primary">
-        Create a New Post for <span class="fw-bold">${group.groupName}</span>
+        Create a New Post for <span class="fw-bold"><c:out value="${group.groupName}"/></span>
     </h2>
 
     <form method="post" action="${pageContext.request.contextPath}/posts/create">
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <input type="hidden" name="groupId" value="${group.groupId}" />
 
         <div class="mb-3">
             <label for="content" class="form-label"><b>Post Content</b></label>
-            <textarea name="content" id="content" class="form-control" rows="5" required></textarea>
+            <textarea name="content" id="content" class="form-control" maxlength="5000" rows="5" required></textarea>
         </div>
 
         <div class="text-center">

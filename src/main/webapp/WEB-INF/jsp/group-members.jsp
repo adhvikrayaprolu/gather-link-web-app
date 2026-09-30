@@ -3,7 +3,7 @@
 <%@ include file="components/header.jsp" %>
 
 <div class="container mt-5">
-    <h2 class="text-center mb-4 text-primary">Members of "${group.groupName}"</h2>
+    <h2 class="text-center mb-4 text-primary">Members of "<c:out value="${group.groupName}"/>"</h2>
 
     <div class="table-responsive">
         <table class="table table-striped table-bordered shadow-sm custom-table">
@@ -29,12 +29,13 @@
                     <c:if test="${membership.user.userId != group.owner.userId}">
                         <tr>
                             <td>${membership.user.userId}</td>
-                            <td>${membership.user.username}</td>
-                            <td>${membership.user.email}</td>
+                            <td><c:out value="${membership.user.username}"/></td>
+                            <td><c:out value="${membership.user.email}"/></td>
                             <td>
 							    <c:choose>
 							        <c:when test="${sessionScope.loggedInUser.userId == group.owner.userId}">
 							            <form action="${pageContext.request.contextPath}/groups/${group.groupId}/members/${membership.user.userId}/role" method="post" class="d-flex">
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 							                <select name="role" class="form-select form-select-sm me-2">
 							                    <option value="MEMBER" <c:if test="${membership.role == 'MEMBER'}">selected</c:if>>MEMBER</option>
 							                    <option value="MODERATOR" <c:if test="${membership.role == 'MODERATOR'}">selected</c:if>>MODERATOR</option>

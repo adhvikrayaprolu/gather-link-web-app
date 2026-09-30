@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "group_memberships")
+@Table(name = "group_memberships", uniqueConstraints=@UniqueConstraint(columnNames={"group_id","user_id"}))
 public class GroupMemberships {
 	
 	@Id

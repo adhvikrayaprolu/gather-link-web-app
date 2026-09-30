@@ -55,7 +55,7 @@ public class ExploreGroupsController {
 	        return "redirect:/login";
 	    }
 	    group.setOwner(loggedInUser);
-	    groupService.updateGroup(group);
+	    groupService.create(group);
 	    return "redirect:/explore-groups";
 	}
 	

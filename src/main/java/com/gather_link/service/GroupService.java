@@ -19,6 +19,7 @@ public class GroupService {
 	private GroupRepository groupRepository;
 	
 	public void create(Groups group) {
+        if(group.getGroupName()==null || group.getGroupName().isBlank() || group.getGroupName().length()>100 || group.getDescription()==null || group.getDescription().isBlank() || group.getDescription().length()>2000) throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST,"Group requires a name (up to 100 characters) and description (up to 2000)");
         groupRepository.save(group);
     }
 	
