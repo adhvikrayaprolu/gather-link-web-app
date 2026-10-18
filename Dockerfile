@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-jammy AS build
+FROM eclipse-temurin:17-jdk-jammy@sha256:73ed442231ec66cfe48cae0b263ce619a75ab96d162ab325f38fc0a269ee3aab AS build
 WORKDIR /build
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
@@ -10,7 +10,7 @@ RUN --mount=type=cache,target=/root/.m2 ./mvnw --batch-mode -Dstyle.color=never 
 COPY scripts/container/HttpProbe.java /probe/HttpProbe.java
 RUN javac -d /probe /probe/HttpProbe.java
 
-FROM eclipse-temurin:17-jre-jammy AS application
+FROM eclipse-temurin:17-jre-jammy@sha256:b3054a20e1a851574cdb1692dd0db5310c647e62214a2a7abecbec1b9e3ae8f1 AS application
 RUN groupadd --gid 10001 gatherlink \
     && useradd --uid 10001 --gid 10001 --home-dir /app --no-create-home gatherlink \
     && mkdir -p /app /data \
