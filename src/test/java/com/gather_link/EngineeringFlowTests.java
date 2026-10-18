@@ -24,6 +24,7 @@ class EngineeringFlowTests {
  Users account(String name){var u=new Users();u.setUsername(name);u.setEmail(name+"@example.test");u.setPassword("test-password-234");users.create(u);return u;}
  MockHttpSession session(Users user){var s=new MockHttpSession();s.setAttribute("loggedInUser",user);return s;}
  @BeforeEach void setup(){owner=account("owner");member=account("member");stranger=account("stranger");group=new Groups();group.setGroupName("Engineering");group.setDescription("Build useful things");group.setOwner(owner);groups.create(group);}
+ @Test void publicHealthProbesRequireNoLogin()throws Exception{mvc.perform(get("/health/live")).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("up"));mvc.perform(get("/health/ready")).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("ready"));}
  @Test void hashesPasswordsAndDoesNotSerializeThem()throws Exception{
   assertNotEquals("test-password-234",owner.getPassword());assertTrue(encoder.matches("test-password-234",owner.getPassword()));
   assertFalse(new com.fasterxml.jackson.databind.ObjectMapper().findAndRegisterModules().writeValueAsString(owner).contains("password"));
