@@ -1,0 +1,36 @@
+name: gather-link-web
+services:
+  app:
+    image: gather-link-web-local:latest
+    build: .
+    init: true
+    ports:
+      - "127.0.0.1:${APP_PORT:-8082}:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: "jdbc:h2:file:/data/gatherlink;MODE=MySQL;DATABASE_TO_LOWER=TRUE;AUTO_SERVER=FALSE"
+    volumes:
+      - gather-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,noexec,size=134217728,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 30s
+  smoke:
+    user: "10001:10001"
+    profiles: [checks]
+    image: python:3.13-slim-bookworm
+    environment:
+      SMOKE_APP_URL: http://app:8080
+    volumes:
+      - ./scripts/container/smoke.py:/smoke.py:ro
+    entrypoint: [python, /smoke.py]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    depends_on:
+      app: {condition: service_healthy}
+volumes:
+  gather-data:

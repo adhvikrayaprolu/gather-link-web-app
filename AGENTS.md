@@ -2,13 +2,13 @@
 Discover, join and participate in interest groups through a browser.
 
 # Architecture
-src/main/java/com/gather_link: MVC controllers, services, JPA models/repositories; src/main/webapp/WEB-INF/jsp: JSP; application-local.properties: in-memory H2; default profile: MySQL.
+src/main/java/com/gather_link: MVC controllers, services, JPA models/repositories; src/main/webapp/WEB-INF/jsp: JSP; application-local.properties: persistent file-backed H2; default profile: local; optional MySQL requires explicit configuration.
 
 # Local Development
-Follow the verified root README workflow. Root Makefiles coordinate Python/React environments where present; Spring defaults to persistent local H2; Android needs JDK17 and an explicit SDK path. Do not use source-level credentials or mutate live Firebase.
+Follow the root README Docker path: copy .env.example, then docker compose up --build --wait. Local port defaults to 8082; H2 persists in the project volume. Native JDK17 editing commands are in docs/development.md. Never connect to live MySQL/Firebase during unattended tests.
 
 # Validation
-Canonical setup/run/check commands: `./mvnw spring-boot:run; ./mvnw verify` (run as separate commands). See README for prerequisites. Behavioral tests are mandatory and CI runs them; do not reduce checks to syntax or zero-test builds. Provider tests use fakes or demo-gatherlink emulators.
+Canonical container validation is make check. It builds the tested executable WAR and verifies real HTTP/session/CSRF/group/post behavior plus persistence in its own disposable project. Preserve developer data; never prune globally. Native regression command: ./mvnw --batch-mode verify. Do not claim visual or production verification from the HTTP smoke suite.
 
 # Frontend Rules
 Keep the native stack (JSP, vanilla HTML or Android Java/XML). Preserve keyboard/accessibility, loading/error/empty states; do not migrate to React.
@@ -23,7 +23,7 @@ Add meaningful regression tests for the selected workflow, including failure/aut
 Read open GitHub issues as the work source. Branch from current main as codex/<issue>-<scope>; link the real issue in a draft PR, record validation and verification limits. Use Closes #N only when all criteria are met; issue closes on human merge, not when the draft opens. Never merge or push directly to main.
 
 # Do Not
-Do not commit secrets, migrate frameworks, change unrelated features, deploy, rotate credentials or mutate live cloud data. Inspect open PRs before selecting an issue; the quality integration PR publishes earlier product and control-plane work. Never redo work already present in an active PR.
+Do not commit secrets, migrate frameworks, change unrelated features, deploy, rotate credentials or mutate live cloud data. Inspect open PRs before selecting an issue; PR #7 is merged and existing implementation must not be duplicated. Never redo work already present in an active PR.
 
 # Issue Selection Rules
 1. Read the Portfolio readiness tracking meta issue; stop if complete.

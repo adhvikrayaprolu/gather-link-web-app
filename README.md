@@ -1,44 +1,67 @@
 # GatherLink Web
-An interest-group community application for discovering groups, joining them and sharing posts through a browser.
 
-## Overview
-GatherLink organizes community discussion around shared interests, with group owners, members and authenticated posting.
+Discover interest groups, join communities and share posts through a browser.
 
-## Project Context
-Developed during a software engineering internship at ClayHR. The [Android application](https://github.com/adhvikrayaprolu/gather-link-mobile-app) explores the same GatherLink product using Firebase. These are related clients/prototypes, not a shared live database: web uses JPA/H2 or MySQL; Android uses Firestore.
+## Demo / Screenshots
 
-## Key Features
+No hosted demo or reviewed screenshot is published. Run the real app locally below.
+
+## What it does / Key Features
+
 - Registration and BCrypt-backed session login.
-- Group discovery/creation and idempotent membership joins.
+- Group creation/discovery and idempotent membership joins.
 - Member/owner post access and owner-controlled role changes.
 - CSRF-protected forms, validated input and escaped JSP output.
 
+Developed during a software engineering internship at ClayHR. The related Android prototype uses separate Firebase persistence; these clients do not share a live database.
+
 ## Architecture / Tech Stack
-Spring Boot MVC + Spring Security → services/authorization boundaries → JPA repositories → persistent local H2. JSP/CSS renders server-side pages. Optional production MySQL uses environment configuration; local startup requires no database installation.
+
+```text
+Browser → Spring MVC / JSP + Spring Security → services → JPA → persistent H2
+```
+
+Java 17 and an executable WAR; one non-root container and a database volume. No MySQL installation is needed.
 
 ## Quick Start
-Install JDK17; use the checked-in Maven wrapper:
-```sh
-./mvnw spring-boot:run
-```
-Open http://localhost:8080, register an account, create or join a group, and post. The default `local` profile stores H2 data under ignored `data/`; it survives restart. No credentials are edited into source. Stop with Ctrl-C.
 
-## Validation / Tests
-```sh
-./mvnw verify
-```
-Spring integration tests cover real login, password hashing, CSRF, authorization, input validation, idempotent joins, counters and retired unscoped API writes. CI builds the WAR and executes these tests with isolated H2.
+Install Docker with Compose v2, then:
 
-## Environment Variables
-Default local H2 needs none. The optional `mysql` profile requires `DB_URL`, `DB_USERNAME` and `DB_PASSWORD`, a provisioned schema and HTTPS/cookie configuration. Review `application-mysql.properties` before using an existing database; legacy plaintext passwords and duplicate/counter data need migration review.
+```sh
+git clone https://github.com/adhvikrayaprolu/gather-link-web-app.git
+cd gather-link-web-app
+cp .env.example .env
+docker compose up --build --wait
+```
+
+Open **http://localhost:8082**, register, create or join a group, and post. The first build downloads dependencies and runs regression tests. No accounts are seeded. H2 persists across container replacement.
+
+## Configuration
+
+`.env.example` selects the loopback port. Docker uses local H2; real environment/database/build files are excluded. See [development](docs/development.md) for native editing, logs and intentional resets; [MySQL compatibility](docs/mysql-compatibility-review.md) requires separate review.
+
+## Testing
+
+```sh
+make check
+```
+
+Builds the tested WAR, checks real registration/login/CSRF/group/post behavior, then recreates the container and verifies persistence. Only its disposable project is removed; developer data is preserved. CI runs the same command. PR dependency review flags newly introduced high/critical risks, not historical vulnerabilities.
+
+## API / Data Model
+
+Users own groups, memberships authorize access, and posts belong to groups/creators. Unscoped CRUD endpoints are retired. `/health/live` reports the process; `/health/ready` also checks the database, returning generic 503 on failure.
 
 ## Project Structure
-`src/main/java/com/gather_link/`: controllers, security, services, models and repositories; `src/main/webapp/WEB-INF/jsp/`: views; `src/main/resources/`: profile configuration; `src/test/`: integration suite.
 
-## Current Status / Limitations
-The web flow supports joining; leaving a group is not implemented and remains a scoped issue. Comments and a public entity CRUD API are not advertised as completed features. Production MySQL and existing-data migration require human verification. The deprecated unrestricted entity endpoints were removed to prevent bypassing MVC authorization.
+- `src/main/java/com/gather_link/`: controllers, security, services, JPA models/repositories.
+- `src/main/webapp/WEB-INF/jsp/`: views; `src/main/resources/`: profile configuration.
+- `src/test/`: regression tests; `scripts/container/`: disposable packaged-HTTP checks.
 
-## Related Projects
-[GatherLink Android](https://github.com/adhvikrayaprolu/gather-link-mobile-app) — native client for the same community concept, with separate Firebase persistence.
+## Design Decisions / Known Limitations
 
-Read [AGENTS.md](AGENTS.md) and GitHub Issues before implementation.
+H2 supports one local app per volume. Bootstrap styling needs CDN access. HTTP tests do not establish visual/mobile/accessibility readiness; MySQL hosting and dependency support need separate verification.
+
+## Future Work
+
+Group leave remains [issue #3](https://github.com/adhvikrayaprolu/gather-link-web-app/issues/3); comments are not advertised as complete. Legacy MySQL migration review is [#8](https://github.com/adhvikrayaprolu/gather-link-web-app/issues/8). See [readiness tracker #5](https://github.com/adhvikrayaprolu/gather-link-web-app/issues/5). Nothing is deployed automatically.
